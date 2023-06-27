@@ -41,53 +41,61 @@ class Deck{
     }
 }
 
-class Player {
-  constructor(name) {
-    this.name = name;
-    this.hand = [];
-    this.score = 0;
+class GameOfWar{
+  constructot() {
+    this.p1 = []
+    this.p2 = []
+    this.pile = []
+    this.gameSetup()
   }
 
-  draw(deck) {
-    this.hand.push(deck.draw());
+  gameSetup() {
+    let deck = new Deck();
+    for (let i = 0; i < 26; i++){
+      this.p1.push(deck.draw());
+      this.p2.push(deck.draw());
+    }
+  }
+
+  playGame() {
+    let round = 0;
+    while (this.p1.length > 0 && this.p2.length > 0) {
+      round++;
+      let p1Card = this.p1.pop();
+      let p2Card = this.p2.pop();
+  
+      if (p1Card.score === p2Card.score) {
+        this.pile.push(p1Card, p2Card)
+        this.war()
+      }else if(p1Card.score > p2Card.score) {
+        console.log('Player 1 wins the round!');
+        console.log(`${p1Card.rank} of ${p1Card.suit} beats ${p2Card.rank} of ${p2Card.suit}`)
+        this.p1.unshift(p2Card, p1Card, ...this.pile.splice(0));
+      } else {
+        console.log('Player 2 wins the round!');
+        console.log(`${p2Card.rank} of ${p2Card.suit} beats ${p1Card.rank} of ${p1Card.suit}`)
+        this.p2.unshift(p2Card, p1Card, ...this.pile.splice(0));
+      }
+    }
+    if (this.p1.length > 0) {
+      console.log(`Player 1 wins the game in ${round} rounds! with ${this.p1.length} cards left`);
+    } else {
+      console.log(`Player 2 wins the game in ${round} rounds! with ${this.p2.length} cards left`);
+    }
+  }
+
+  war() {
+    console.log(`WAR!`)
+    if (this.p1.length < 4 || this.p2.length < 4) {
+      if(this.p1.length < 4) {
+        this.p2.push(...this.p1.splice(0), ...this.pile.splice(0));
+      } else {
+        this.p1.push(...this.p2.splice(0), ...this.pile.splice(0));
+      }
+    } else {
+      let p1WarCards = this.p1.splice(-3, 3);
+      let p2WarCards = this.p2.splice(-3, 3);
+      this.pile.push(...p1WarCards, ...p2WarCards);
+    }
   }
 }
-
-//create deck
-let deck = new Deck();
-// console.log(" New Deck: ")
-// console.log(deck.cards);
-// console.log("drawn card: ")
-// console.log(deck.draw());
-//create players
-let player1 = new Player('Player 1');
-let player2 = new Player('Player 2');
-
-// console.log("Player 1's hand: ")
-// console.log(player1.hand);
-
-//evenly split deck between players
-for (let i = 0; i < 26; i++){
-  player1.draw(deck);
-  player2.draw(deck);
-}
-// console.log("Player 1's hand: ")
-// console.log(player1.hand);
-
-//compare cards and push to winner's hand
-function compareCards(player1, player2) {
-  if (player1.hand[0].score > player2.hand[0].score) {
-    console.log(`${player1.name} wins the round!`);
-    player1.hand.push(player2.hand.pop());
-    player1.hand.push(player1.hand.shift());
-  } else if (player1.hand[0].score < player2.hand[0].score) {
-    console.log(`${player2.name} wins the round!`);
-    player2.hand.push(player1.hand.pop());
-    player2.hand.push(player2.hand.shift());
-  } else {
-    console.log("It's a tie!");
-    player1.hand.push(player1.hand.shift());
-    player2.hand.push(player2.hand.shift());
-  }
-}
-//Start game
