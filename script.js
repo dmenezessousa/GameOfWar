@@ -55,14 +55,39 @@ class Player {
 
 //create deck
 let deck = new Deck();
-
-
+// console.log(" New Deck: ")
+// console.log(deck.cards);
+// console.log("drawn card: ")
+// console.log(deck.draw());
 //create players
 let player1 = new Player('Player 1');
 let player2 = new Player('Player 2');
+
+// console.log("Player 1's hand: ")
+// console.log(player1.hand);
 
 //evenly split deck between players
 for (let i = 0; i < 26; i++){
   player1.draw(deck);
   player2.draw(deck);
 }
+// console.log("Player 1's hand: ")
+// console.log(player1.hand);
+
+//compare cards and push to winner's hand
+function compareCards(player1, player2) {
+  if (player1.hand[0].score > player2.hand[0].score) {
+    console.log(`${player1.name} wins the round!`);
+    player1.hand.push(player2.hand.pop());
+    player1.hand.push(player1.hand.shift());
+  } else if (player1.hand[0].score < player2.hand[0].score) {
+    console.log(`${player2.name} wins the round!`);
+    player2.hand.push(player1.hand.pop());
+    player2.hand.push(player2.hand.shift());
+  } else {
+    console.log("It's a tie!");
+    player1.hand.push(player1.hand.shift());
+    player2.hand.push(player2.hand.shift());
+  }
+}
+//Start game
